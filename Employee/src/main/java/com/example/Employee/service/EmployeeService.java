@@ -2,7 +2,6 @@ package com.example.Employee.service;
 
 import java.util.List;
 
-import com.example.Employee.EmployeeApplication;
 import com.example.Employee.dto.EmployeeDto;
 
 public interface EmployeeService {
@@ -12,7 +11,10 @@ EmployeeDto  getEmployeeById(Long employeeId);
 
 List<EmployeeDto> getAllEmployees();
 
+List<EmployeeDto> searchEmployees(String keyword);
+
 EmployeeDto updateEmployee(Long employeeId, EmployeeDto updatedEmployee);
 
 void deleteEmployee(Long employeeId);
+
 }

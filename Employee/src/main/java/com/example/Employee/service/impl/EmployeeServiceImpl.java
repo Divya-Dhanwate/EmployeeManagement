@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.Employee.dto.EmployeeDto;
 import com.example.Employee.entity.Employee;
+import com.example.Employee.exception.EmailAlreadyExistsException;
 import com.example.Employee.exception.ResourceNotFoundException;
 import com.example.Employee.mapper.EmployeeMapper;
 import com.example.Employee.repository.EmployeeRepository;
@@ -21,6 +22,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private  EmployeeRepository employeeRepository;
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
+
+        if(employeeRepository.existsByEmail(employeeDto.getEmail())){
+            throw new EmailAlreadyExistsException("email already exists");
+        }
         Employee employee= EmployeeMapper.mapToEmployee(employeeDto);
        Employee savedEmployee= employeeRepository.save(employee);
        return EmployeeMapper.mapToEmployeeDto(savedEmployee);
@@ -47,6 +52,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto updateEmployee(Long employeeId, EmployeeDto updatedEmployee) {
       Employee employee=  employeeRepository.findById(employeeId).orElseThrow(() ->  new  ResourceNotFoundException("Employee is not exist" +employeeId) );
 
+        if(!employee.getEmail().equals(updatedEmployee.getEmail()) && employeeRepository.existsByEmail(updatedEmployee.getEmail())){
+            throw new EmailAlreadyExistsException("email already exists");
+
+        }
+
       employee.setFirstName(updatedEmployee.getFirstName());
       employee.setEmail(updatedEmployee.getEmail());
       employee.setLastName(updatedEmployee.getLastName());
@@ -62,4 +72,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.deleteById(employeeId);
 
     }
+
+    @Override
+    public List<EmployeeDto> searchEmployees(String keyword) {
+
+    List<Employee> employees =
+            employeeRepository
+                    .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                            keyword,
+                            keyword,
+                            keyword
+                    );
+
+    return employees.stream()
+            .map((employee) -> EmployeeMapper.mapToEmployeeDto(employee))
+            .collect(Collectors.toList());
+}
 }

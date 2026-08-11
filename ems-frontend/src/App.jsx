@@ -2,9 +2,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import FooterComponent from './components/FooterComponent'
-import HeaderComponent from './components/HeaderComponent'
+import Header from './components/Header'
 import ListEmployeeComponent from './components/ListEmployeeComponent'
-import EmployeeComponent from './components/EmployeeComponent'
+import EmployeeForm from './components/EmployeeForm'
 
 function App() {
 
@@ -13,17 +13,18 @@ function App() {
 
 
       <BrowserRouter>
+        <div className='min-h-screen flex flex-col bg-slate-50'>
+          <Header />
+          <Routes>
+            <Route path="/" element={<ListEmployeeComponent />} />
+            <Route path="/employees" element={<ListEmployeeComponent />} />
+            <Route path="/add-employee" element={<EmployeeForm />} />
 
-        <HeaderComponent />
-       <Routes>
-  <Route path="/" element={<ListEmployeeComponent />} />
-  <Route path="/employees" element={<ListEmployeeComponent />} />
-  <Route path="/add-employee" element={<EmployeeComponent />} />
+            <Route path='/edit-employee/:id' element={<EmployeeForm />}></Route>
+          </Routes>
 
-  <Route path='/edit-employee/:id' element ={<EmployeeComponent />}></Route>
-</Routes>
-
-        <FooterComponent />
+          <FooterComponent />
+        </div>
       </BrowserRouter>
 
 
